@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Device</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
+
+    <div class="w-full max-w-md bg-white rounded-2xl shadow p-6">
+        <!-- Header -->
+        <h1 class="text-2xl font-bold mb-4">➕ Add New Device</h1>
+        <p class="text-sm mb-4 text-gray-500">Fill in the details below to register a new water meter device.</p>
+
+        <!-- Form -->
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            {% for field in form %}
+                <div>
+                    <label class="block font-medium mb-1">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ field.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-2xl">
+                Add Device
+            </button>
+        </form>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="mt-4 space-y-2">
+            {% for message in messages %}
+                <p class="p-2 rounded {{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Back link -->
+        <div class="mt-4 text-center">
+            <a href="{% url 'dashboard' %}" class="text-blue-600 hover:underline">← Back to Dashboard</a>
+        </div>
+    </div>
+
+</body>
+</html>

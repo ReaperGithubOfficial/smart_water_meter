@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Water Meter Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
+
+    <div class="w-full max-w-6xl">
+
+        <!-- Header -->
+        <div class="bg-blue-600 text-white p-6 rounded-2xl shadow mb-6">
+            <h1 class="text-4xl font-bold">💧 Water Meter Dashboard</h1>
+            <p class="text-md mt-1">Real-time water usage from your devices</p>
+        </div>
+
+        <!-- Device Selector with status -->
+        <div class="mb-6 flex items-center gap-4">
+            <label for="deviceSelect" class="font-semibold">Select Device:</label>
+            <select id="deviceSelect" class="border rounded-lg p-2">
+                {% for device in devices %}
+                <option value="{{ device.device_id }}">
+                    {{ device.name|default:device.device_id }}
+                    {% if device.is_online %}(Online){% else %}(Offline){% endif %}
+                </option>
+                {% endfor %}
+            </select>
+            <span id="statusDot" class="w-4 h-4 rounded-full"
+                  style="background-color: {% if devices.0.is_online %}green{% else %}red{% endif %};"></span>
+        </div>
+
+        <!-- Chart -->
+        <div class="bg-white rounded-2xl shadow p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4">💧 Water Usage Trend</h2>
+            <canvas id="usageChart" height="150"></canvas>
+        </div>
+
+        <!-- Detailed Usage Table -->
+        <div class="bg-white rounded-2xl shadow p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4">📊 Detailed Usage Logs</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-left table-auto">
+                    <thead class="bg-gray-100 text-gray-600 uppercase">
+                        <tr>
+                            <th class="px-6 py-3">Device</th>
+                            <th class="px-6 py-3">Count</th>
+                            <th class="px-6 py-3">Liters</th>
+                            <th class="px-6 py-3">Timestamp</th>
+                            <th class="px-6 py-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTable">
+                        {% for log in logs %}
+                        <tr class="border-b hover:bg-gray-50" data-device-id="{{ log.device.device_id }}">
+                            <td class="px-6 py-2">{{ log.device.device_id }}</td>
+                            <td class="px-6 py-2">{{ log.count }}</td>
+                            <td class="px-6 py-2">{{ log.liters|floatformat:2 }}</td>
+                            <td class="px-6 py-2">{{ log.created_at|date:"Y-m-d H:i:s" }}</td>
+                            <td class="px-6 py-2">
+                                {% if log.device.is_online %}
+                                <span class="inline-block w-3 h-3 rounded-full bg-green-500"></span> Online
+                                {% else %}
+                                <span class="inline-block w-3 h-3 rounded-full bg-red-500"></span> Offline
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-2 text-center text-gray-500">No logs yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    const logsTable = document.getElementById("logsTable");
+    const deviceSelect = document.getElementById("deviceSelect");
+    const statusDot = document.getElementById("statusDot");
+    const ctx = document.getElementById("usageChart").getContext("2d");
+
+    // Chart setup
+    const chart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: [],
+            datasets: [{
+                label: "Liters",
+                data: [],
+                borderColor: "rgb(37, 99, 235)",
+                backgroundColor: "rgba(37, 99, 235, 0.2)",
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: true } },
+            scales: {
+                y: { beginAtZero: true, title: { display: true, text: "Liters" } },
+                x: { title: { display: true, text: "Time" } }
+            }
+        }
+    });
+
+    // Update status indicator
+    function updateStatus(isOnline) {
+        statusDot.style.backgroundColor = isOnline ? "green" : "red";
+    }
+
+    // Update table row background based on online status
+    function setRowsStatus(deviceId, isOnline) {
+        const rows = logsTable.querySelectorAll(`tr[data-device-id="${deviceId}"]`);
+        rows.forEach(row => {
+            row.classList.remove("bg-green-50", "bg-red-50");
+            row.classList.add(isOnline ? "bg-green-50" : "bg-red-50");
+        });
+    }
+
+    // Add log to table + chart
+    function addLog(log) {
+        if (log.device_id !== deviceSelect.value) return;
+
+        // Table row
+        const row = document.createElement("tr");
+        row.classList.add("border-b", "hover:bg-gray-50");
+        row.setAttribute("data-device-id", log.device_id);
+        row.innerHTML = `
+            <td class="px-6 py-2">${log.device_id}</td>
+            <td class="px-6 py-2">${log.count}</td>
+            <td class="px-6 py-2">${parseFloat(log.liters).toFixed(2)}</td>
+            <td class="px-6 py-2">${new Date(log.timestamp).toLocaleString()}</td>
+            <td class="px-6 py-2"><span class="inline-block w-3 h-3 rounded-full bg-green-500"></span> Online</td>
+        `;
+        logsTable.insertBefore(row, logsTable.firstChild);
+
+        // Chart update
+        chart.data.labels.push(new Date(log.timestamp).toLocaleTimeString());
+        chart.data.datasets[0].data.push(parseFloat(log.liters).toFixed(2));
+        if (chart.data.labels.length > 50) { // more data points
+            chart.data.labels.shift();
+            chart.data.datasets[0].data.shift();
+        }
+        chart.update();
+
+        // Status
+        updateStatus(true);
+        setRowsStatus(log.device_id, true);
+    }
+
+    // WebSocket
+    const ws = new WebSocket("ws://" + window.location.host + "/ws/water/");
+
+    ws.onopen = () => console.log("✅ WebSocket connected");
+    ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        if (msg.device_id && msg.count !== undefined) addLog(msg);
+    };
+    ws.onclose = () => {
+        updateStatus(false);
+        setRowsStatus(deviceSelect.value, false);
+    };
+
+    // Device selection change
+    deviceSelect.addEventListener("change", () => {
+        logsTable.innerHTML = "";
+        chart.data.labels = [];
+        chart.data.datasets[0].data = [];
+        chart.update();
+
+        const selectedOption = deviceSelect.options[deviceSelect.selectedIndex];
+        const isOnline = selectedOption.text.includes("Online");
+        updateStatus(isOnline);
+    });
+    </script>
+
+</body>
+</html>

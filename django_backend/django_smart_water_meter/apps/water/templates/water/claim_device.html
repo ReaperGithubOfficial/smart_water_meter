@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Claim Device</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col items-center p-6 min-h-screen">
+    <div class="bg-white rounded-2xl shadow p-6 w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-4">Claim a Water Meter Device</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Add Device</button>
+        </form>
+
+        {% if messages %}
+        <div class="mt-4">
+            {% for message in messages %}
+                <p class="p-2 rounded {{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
